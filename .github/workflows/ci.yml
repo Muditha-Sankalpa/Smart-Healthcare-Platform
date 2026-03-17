@@ -9,6 +9,9 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [frontend] # list all your services/microservices
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
@@ -19,7 +22,7 @@ jobs:
           node-version: '18' # Change based on your stack
 
       - name: Install Dependencies & Test
-        # Assuming you have a frontend and backend folder
         run: |
           npm install
           npm test
+        working-directory: ${{ matrix.service }}

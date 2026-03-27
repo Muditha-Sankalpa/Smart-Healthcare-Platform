@@ -1,0 +1,6 @@
+"symptoms","age","gender","specialty"
+"Nausea,Headache,Cough","41","F","Cardiology"
+"Fever,Headache,Cough","64","F","Neurology"
+"Dizziness","27","M","Cardiology"
+"Headache,Nausea","63","F","Gastroenterology"
+"Fever,Nausea,Dizziness","17","M","Cardiology"

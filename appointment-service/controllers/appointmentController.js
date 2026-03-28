@@ -28,7 +28,8 @@ exports.bookAppointment = async (req, res) => {
         if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
 
         const newAppointment = new Appointment({
-            patientId: req.user.id, // Extracted securely from JWT
+            patientId: req.user.id,
+            patientName: req.user.name,
             doctorId: doctor.id,
             doctorName: doctor.name,
             specialty: doctor.specialty,
@@ -63,7 +64,7 @@ exports.updateAppointment = async (req, res) => {
     try {
         const { date, time, notes } = req.body;
         const appointment = await Appointment.findOneAndUpdate(
-            { _id: req.params.id, patientId: req.user.id }, // Ensure patient owns it
+            { _id: req.params.id, patientId: req.user.id}, // Ensure patient owns it
             { date, time, notes },
             { new: true }
         );

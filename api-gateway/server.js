@@ -37,23 +37,11 @@ app.use("/api/payment", createProxyMiddleware({
   changeOrigin: true,
 }));
 
-// Auth Service
-app.use("/api/auth", createProxyMiddleware({
-  target: "http://localhost:5006",
-  changeOrigin: true,
-}));
-
-// AI Symptom Checker Service
-app.use("/api/symptom-checker", createProxyMiddleware({
-  target: "http://localhost:5007",
-  changeOrigin: true,
-}));
-
 // Default Gateway Route
 app.get('/', (req, res) => {
     res.send('API Gateway is running. Routing traffic to microservices...');
 });
 
-app.listen(PORT, () => {
+app.listen(5000, () => {
   console.log(`🚦 API Gateway is running on http://localhost:${PORT}`);
 });

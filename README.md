@@ -1,2 +1,1 @@
 "# Smart-Healthcare-Platform" 
-

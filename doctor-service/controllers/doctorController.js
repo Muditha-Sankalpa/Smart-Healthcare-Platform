@@ -68,7 +68,7 @@ const getAppointments = async (req, res) => {
     
     // Call Appointment Service to get appointments for this doctor
     const response = await axios.get(
-      `http://localhost:5003/api/appointments/admin/appoinments?doctorId=${doctor._id}`,
+      `http://localhost:5003/api/appointments/doctor/appointments?doctorId=${doctor._id}`,
       { headers: { Authorization: `Bearer ${req.headers.authorization.split(' ')[1]}` } }
     );
     

@@ -41,7 +41,7 @@ const DoctorAppointments = () => {
         localStorage.removeItem('token');
         window.location.href = '/login';
       } else {
-        setError("Unable to load appointments.");
+        setError(err.response?.data?.message || err.response?.data?.error || "Unable to load appointments.");
       }
     } finally {
       setLoading(false);

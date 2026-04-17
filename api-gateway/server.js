@@ -9,34 +9,57 @@ app.use(cors());
 
 // Patient Service
 app.use("/api/patients", createProxyMiddleware({
-  target: "http://localhost:5001",
+  target: process.env.PATIENT_SERVICE_URL || "http://localhost:5001",
   changeOrigin: true,
 }));
 
 // Doctor Service
 app.use("/api/doctors", createProxyMiddleware({
-  target: "http://localhost:5002",
+  target: process.env.DOCTOR_SERVICE_URL || "http://localhost:5002",
   changeOrigin: true,
 }));
 
 // Appointment Service
 app.use("/api/appointments", createProxyMiddleware({
-  target: "http://localhost:5003",
+  target: process.env.APPOINTMENT_SERVICE_URL || "http://localhost:5003",
   changeOrigin: true,
 }));
 
 // Telemedicine Service
 app.use("/api/telemedicine", createProxyMiddleware({
-  target: "http://localhost:5004",
+  target: process.env.TELEMEDICINE_SERVICE_URL || "http://localhost:5004",
   changeOrigin: true,
 }));
 
 // Payment Service
 app.use("/api/payment", createProxyMiddleware({
-  target: "http://localhost:5005",
+  target: process.env.PAYMENT_SERVICE_URL || "http://localhost:5005",
   changeOrigin: true,
 }));
 
+<<<<<<< HEAD
+=======
+// Auth Service
+app.use("/api/auth", createProxyMiddleware({
+  target: process.env.AUTH_SERVICE_URL || "http://localhost:5006",
+  changeOrigin: true,
+  pathRewrite: { '^/api/auth': '' }
+}));
+
+// Notification Service
+app.use("/api/notifications", createProxyMiddleware({
+  target: process.env.NOTIFICATION_SERVICE_URL || "http://localhost:5007",
+  changeOrigin: true,
+}));
+
+// AI Symptom Checker Service
+app.use("/api/symptom-checker", createProxyMiddleware({
+  target: process.env.SYMPTOM_CHECKER_URL || "http://localhost:5008",
+  changeOrigin: true,
+  pathRewrite: { "^/api/symptom-checker": "" }
+}));
+
+>>>>>>> 92b0cf75bfa61c3abc336524107fd0f8257b73bb
 // Default Gateway Route
 app.get('/', (req, res) => {
     res.send('API Gateway is running. Routing traffic to microservices...');

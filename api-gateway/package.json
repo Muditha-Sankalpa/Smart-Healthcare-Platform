@@ -3,7 +3,12 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+<<<<<<< HEAD
     "test": "echo \"Error: no test specified\" && exit 1"
+=======
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+>>>>>>> 92b0cf75bfa61c3abc336524107fd0f8257b73bb
   },
   "keywords": [],
   "author": "",
@@ -11,7 +16,10 @@
   "description": "",
   "dependencies": {
     "cors": "^2.8.6",
-    "express": "^5.2.1",
-    "http-proxy-middleware": "^3.0.5"
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

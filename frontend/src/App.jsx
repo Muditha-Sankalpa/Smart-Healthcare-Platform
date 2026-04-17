@@ -1,121 +1,86 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import Home from './pages/Home';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AuthPage from './pages/auth/AuthPage';
+import PatientDashboard from './pages/patient/PatientDashboard';
+import SessionsPage from './pages/telemedicine/SessionsPageAdmin';
+import BookAppointment from './components/appointments/BookAppointment';
+import DoctorProfile from './pages/doctor/DoctorProfile';
+import DoctorAppointments from './pages/doctor/DoctorAppointments';
+import Prescriptions from './pages/doctor/Prescriptions';
+import Availability from './pages/doctor/Availability';
+import DoctorTelemedicine from './pages/doctor/Telemedicine';
+import PatientAppointments from './pages/patient/Patientappointments';
+import MeetingRoom from './pages/telemedicine/MeetingRoom';
+import SymptomChecker from './pages/patient/SymptomChecker';
+import AdminAppointments from './pages/admin/AdminAppointments';
+import PaymentComponent from './components/payments/PaymentForm';
+import PaymentsAdmin from './pages/payment/PaymentsAdmin';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <BrowserRouter>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<AuthPage />} />
 
-      <div className="ticks"></div>
+        {/* Patient-only routes */}
+        <Route path="/patient" element={
+          <ProtectedRoute allowedRoles={['Patient']}><PatientDashboard /></ProtectedRoute>
+        } />
+        <Route path="/patient/appointments" element={
+          <ProtectedRoute allowedRoles={['Patient']}><PatientAppointments /></ProtectedRoute>
+        } />
+        <Route path="/patient/symptom-checker" element={
+          <ProtectedRoute allowedRoles={['Patient']}><SymptomChecker /></ProtectedRoute>
+        } />
+        <Route path="/book-appointment" element={
+          <ProtectedRoute allowedRoles={['Patient']}><BookAppointment /></ProtectedRoute>
+        } />
+        <Route path="/payment" element={
+          <ProtectedRoute allowedRoles={['Patient']}><PaymentComponent /></ProtectedRoute>
+        } />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+        {/* Doctor-only routes */}
+        <Route path="/doctor/profile" element={
+          <ProtectedRoute allowedRoles={['Doctor']}><DoctorProfile /></ProtectedRoute>
+        } />
+        <Route path="/doctor/appointments" element={
+          <ProtectedRoute allowedRoles={['Doctor']}><DoctorAppointments /></ProtectedRoute>
+        } />
+        <Route path="/doctor/prescriptions" element={
+          <ProtectedRoute allowedRoles={['Doctor']}><Prescriptions /></ProtectedRoute>
+        } />
+        <Route path="/doctor/availability" element={
+          <ProtectedRoute allowedRoles={['Doctor']}><Availability /></ProtectedRoute>
+        } />
+        <Route path="/doctor/telemedicine" element={
+          <ProtectedRoute allowedRoles={['Doctor']}><DoctorTelemedicine /></ProtectedRoute>
+        } />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+        {/* Admin-only routes */}
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute allowedRoles={['Admin']}><AdminDashboard /></ProtectedRoute>
+        } />
+        <Route path="/admin/appointments" element={
+          <ProtectedRoute allowedRoles={['Admin']}><AdminAppointments /></ProtectedRoute>
+        } />
+        <Route path="/allSessions" element={
+          <ProtectedRoute allowedRoles={['Admin', 'Patient']}><SessionsPage /></ProtectedRoute>
+        } />
+        <Route path="/allPayments" element={
+          <ProtectedRoute allowedRoles={['Admin', 'Patient']}><PaymentsAdmin /></ProtectedRoute>
+        } />
+
+        {/* Shared across authenticated roles */}
+        <Route path="/admin/telemedicine/join/:sessionId" element={
+          <ProtectedRoute allowedRoles={['Admin', 'Doctor', 'Patient']}><MeetingRoom /></ProtectedRoute>
+        } />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

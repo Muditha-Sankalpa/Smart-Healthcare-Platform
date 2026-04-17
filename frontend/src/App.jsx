@@ -18,6 +18,7 @@ import AdminAppointments from './pages/admin/AdminAppointments';
 import PaymentComponent from './components/payments/PaymentForm';
 import PaymentsAdmin from './pages/payment/PaymentsAdmin';
 import FindDoctors from './pages/patient/FindDoctors';
+import AdminDoctors from './pages/admin/AdminDoctors';
 function App() {
   return (
     <BrowserRouter>
@@ -42,6 +43,7 @@ function App() {
         <Route path="/payment" element={<PaymentComponent />} />
         <Route path="/allPayments" element={<PaymentsAdmin />} />
         <Route path="/patient/doctors" element={<FindDoctors />} />
+        <Route path="/admin/doctors" element={<AdminDoctors />} />
       </Routes>
     </BrowserRouter>
   );

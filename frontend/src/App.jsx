@@ -10,14 +10,14 @@ import DoctorProfile from './pages/doctor/DoctorProfile';
 import DoctorAppointments from './pages/doctor/DoctorAppointments';
 import Prescriptions from './pages/doctor/Prescriptions';
 import Availability from './pages/doctor/Availability';
-import DoctorTelemedicine from './pages/doctor/Telemedicine';
+import Telemedicine from './pages/doctor/Telemedicine';
 import PatientAppointments from './pages/patient/Patientappointments';
 import MeetingRoom from './pages/telemedicine/MeetingRoom';
 import SymptomChecker from './pages/patient/SymptomChecker';
 import AdminAppointments from './pages/admin/AdminAppointments';
 import PaymentComponent from './components/payments/PaymentForm';
 import PaymentsAdmin from './pages/payment/PaymentsAdmin';
-
+import FindDoctors from './pages/patient/FindDoctors';
 function App() {
   return (
     <BrowserRouter>
@@ -30,7 +30,7 @@ function App() {
         <Route path="/doctor/appointments" element={<DoctorAppointments />} />
         <Route path="/doctor/prescriptions" element={<Prescriptions />} />
         <Route path="/doctor/availability" element={<Availability />} />
-        <Route path="/doctor/telemedicine" element={<DoctorTelemedicine />} />
+        <Route path="/doctor/telemedicine" element={<Telemedicine />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/login" element={<AuthPage />} />
         <Route path="/allSessions" element={<SessionsPage />} />
@@ -41,6 +41,7 @@ function App() {
         <Route path="/admin/appointments" element={<AdminAppointments />} />
         <Route path="/payment" element={<PaymentComponent />} />
         <Route path="/allPayments" element={<PaymentsAdmin />} />
+        <Route path="/patient/doctors" element={<FindDoctors />} />
       </Routes>
     </BrowserRouter>
   );

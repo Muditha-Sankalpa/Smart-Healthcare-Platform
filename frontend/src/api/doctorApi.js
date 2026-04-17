@@ -25,14 +25,22 @@ export const viewPatientReports = (patientId) =>
   axiosClient.get(`/doctors/patient/${patientId}/reports`);
 
 // --- Telemedicine ---
+// Create telemedicine session via Doctor Service (orchestrator)
 export const startTelemedicineSession = (appointmentId) => 
   axiosClient.post('/doctors/telemedicine/start', { appointmentId });
+
+// Get sessions for logged-in doctor
+// Backend auto-filters by req.user.id (Doctor ID) via JWT token
 export const getDoctorSessions = (status = '') => {
   const url = `/telemedicine${status ? `?status=${status}` : ''}`;
-  return axiosClient.get(url); // Note: Ensure gateway routes /api/telemedicine to port 5004
+  return axiosClient.get(url); // Gateway routes to Telemedicine Service (port 5004)
 };
+
+// Update session status: SCHEDULED → ACTIVE
 export const startSession = (sessionId) => 
   axiosClient.put(`/telemedicine/start/${sessionId}`);
+
+// Update session status: ACTIVE → COMPLETED
 export const endSession = (sessionId) => 
   axiosClient.put(`/telemedicine/end/${sessionId}`);
 
@@ -40,5 +48,7 @@ export const endSession = (sessionId) =>
 export const getAllDoctors = (specialty = '') => 
   axiosClient.get(`/doctors/all${specialty ? `?specialty=${specialty}` : ''}`);
 export const getAllDoctorsAdmin = () => axiosClient.get('/doctors/admin/all');
-export const verifyDoctor = (id) => axiosClient.put(`/doctors/admin/${id}/verify`);
+//export const verifyDoctor = (id) => axiosClient.put(`/doctors/admin/${id}/verify`);
+export const verifyDoctor = (id, isVerified) => 
+  axiosClient.put(`/doctors/admin/${id}/verify`, { verified: isVerified });
 export const getDoctorById = (id) => axiosClient.get(`/doctors/${id}`);

@@ -10,13 +10,16 @@ import DoctorProfile from './pages/doctor/DoctorProfile';
 import DoctorAppointments from './pages/doctor/DoctorAppointments';
 import Prescriptions from './pages/doctor/Prescriptions';
 import Availability from './pages/doctor/Availability';
-import DoctorTelemedicine from './pages/doctor/Telemedicine';
+import Telemedicine from './pages/doctor/Telemedicine';
 import PatientAppointments from './pages/patient/Patientappointments';
 import MeetingRoom from './pages/telemedicine/MeetingRoom';
 import SymptomChecker from './pages/patient/SymptomChecker';
 import AdminAppointments from './pages/admin/AdminAppointments';
 import PaymentComponent from './components/payments/PaymentForm';
 import PaymentsAdmin from './pages/payment/PaymentsAdmin';
+import FindDoctors from './pages/patient/FindDoctors';
+import AdminDoctors from './pages/admin/AdminDoctors';
+import PatientReports from './pages/doctor/PatientReports';
 
 function App() {
   return (
@@ -42,6 +45,9 @@ function App() {
         <Route path="/payment" element={
           <ProtectedRoute allowedRoles={['Patient']}><PaymentComponent /></ProtectedRoute>
         } />
+        <Route path="/patient/doctors" element={
+          <ProtectedRoute allowedRoles={['Patient']}><FindDoctors /></ProtectedRoute>
+        } />
 
         {/* Doctor-only routes */}
         <Route path="/doctor/profile" element={
@@ -57,8 +63,11 @@ function App() {
           <ProtectedRoute allowedRoles={['Doctor']}><Availability /></ProtectedRoute>
         } />
         <Route path="/doctor/telemedicine" element={
-          <ProtectedRoute allowedRoles={['Doctor']}><DoctorTelemedicine /></ProtectedRoute>
+          <ProtectedRoute allowedRoles={['Doctor']}><Telemedicine /></ProtectedRoute>
         } />
+        <Route path="/doctor/patient-reports" element={
+          <ProtectedRoute>allowedRoles={['Doctor']}<PatientReports/></ProtectedRoute>
+        }/>
 
         {/* Admin-only routes */}
         <Route path="/admin/dashboard" element={
@@ -72,6 +81,9 @@ function App() {
         } />
         <Route path="/allPayments" element={
           <ProtectedRoute allowedRoles={['Admin', 'Patient']}><PaymentsAdmin /></ProtectedRoute>
+        } />
+        <Route path="/admin/doctors" element={
+          <ProtectedRoute allowedRoles={['Admin']}><AdminDoctors /></ProtectedRoute>
         } />
 
         {/* Shared across authenticated roles */}

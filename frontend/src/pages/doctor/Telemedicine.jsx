@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { DoctorNavBar } from '../../components/shared';
-import { getDoctorSessions, startSession, endSession } from '../../api/doctorApi';
-import { Video, Calendar, Clock, ExternalLink, Loader2, AlertCircle, Play, Square, RefreshCw, Users } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { DoctorNavBar } from '../../components/shared'; // Ensure this component exists in your shared folder
+import API from '../../api/axiosClient';
+import { 
+  Video, 
+  Calendar, 
+  Clock, 
+  ExternalLink, 
+  Loader2, 
+  AlertCircle, 
+  Play, 
+  Square, 
+  RefreshCw,
+  Users,
+  Check
+} from 'lucide-react';
 
+// Simple Status Badge Component
 const StatusBadge = ({ status }) => {
   const statusStyles = {
-    COMPLETED: "bg-green-100 text-green-700 border-green-200",
     SCHEDULED: "bg-blue-100 text-blue-700 border-blue-200",
     ACTIVE: "bg-purple-100 text-purple-700 border-purple-200",
+    COMPLETED: "bg-green-100 text-green-700 border-green-200",
     CANCELLED: "bg-red-100 text-red-700 border-red-200",
   };
   
@@ -18,37 +32,33 @@ const StatusBadge = ({ status }) => {
   );
 };
 
-const DoctorTelemedicine = () => {
+const Telemedicine = () => {
+  const navigate = useNavigate();
   const [sessions, setSessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [filter, setFilter] = useState('all');
   const [actionLoading, setActionLoading] = useState(null);
 
+  // 🔥 1. Fetch Sessions
+  // The Backend Controller (telemedicineController.js) automatically applies:
+  // if (req.user.role === 'Doctor') filter.doctorId = req.user.id;
+  // So this GET request returns ONLY this doctor's sessions.
   const fetchSessions = async () => {
     try {
       setLoading(true);
       setError(null);
       
-      // Call the API - Backend will auto-filter by doctorId from JWT token
-      const response = await getDoctorSessions();
+      // Call the Telemedicine API via Gateway
+      const response = await API.get('/telemedicine');
       
-      // Handle response format
-      const data = Array.isArray(response.data) 
-        ? response.data 
-        : response.data.sessions || [];
-      
+      const data = Array.isArray(response.data) ? response.data : [];
       setSessions(data);
     } catch (err) {
       console.error("Fetch error:", err);
-      
-      // Better error messages
-      if (err.code === 'ECONNREFUSED') {
-        setError("Telemedicine service is not running. Please start the backend server.");
-      } else if (err.response?.status === 401) {
+      if (err.response?.status === 401) {
         setError("Unauthorized. Please login again.");
-        localStorage.removeItem('token');
-        window.location.href = '/login';
+        navigate('/login');
       } else if (err.response?.status === 404) {
         setError("Telemedicine route not found. Check API Gateway configuration.");
       } else {
@@ -63,7 +73,7 @@ const DoctorTelemedicine = () => {
     fetchSessions();
   }, []);
 
-  // Filter sessions by status
+  // Filter sessions by status for UI tabs
   const filteredSessions = filter === 'all' 
     ? sessions 
     : sessions.filter(s => s.status?.toUpperCase() === filter.toUpperCase());
@@ -71,38 +81,60 @@ const DoctorTelemedicine = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
     return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit'
+      month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
     });
   };
 
+  // 🔥 2. Start Video Consultation Session
+  // Changes status from SCHEDULED to ACTIVE
   const handleStartSession = async (sessionId) => {
     try {
       setActionLoading(sessionId);
-      await startSession(sessionId);
-      await fetchSessions(); // Refresh list
+      await API.put(`/telemedicine/start/${sessionId}`);
+      await fetchSessions(); // Refresh list to show updated status
     } catch (err) {
-      alert("Failed to start session: " + (err.response?.data?.message || err.message));
+      alert("Failed to start session.");
     } finally {
       setActionLoading(null);
     }
   };
 
+  // 🔥 3. Mark Telemedicine Session as Completed
+  // Changes status from ACTIVE to COMPLETED
   const handleEndSession = async (sessionId) => {
     if (!window.confirm("End this consultation session?")) return;
     try {
       setActionLoading(sessionId);
-      await endSession(sessionId);
+      await API.put(`/telemedicine/end/${sessionId}`);
       await fetchSessions();
     } catch (err) {
-      alert("Failed to end session: " + (err.response?.data?.message || err.message));
+      alert("Failed to end session.");
     } finally {
       setActionLoading(null);
     }
   };
 
+  // 🔥 4. Join Meeting (Open Jitsi Link in New Tab)
   const handleJoinMeeting = (meetingLink) => {
     if (meetingLink) {
       window.open(meetingLink, '_blank', 'noopener,noreferrer');
+    }
+  };
+
+  // 🔥 5. Accept Virtual Consultation Request
+  // This calls the Doctor Service to accept the appointment AND create the telemedicine session
+  const handleAcceptConsultation = async (appointmentId) => {
+    try {
+      setActionLoading(appointmentId);
+      // Call Doctor Service endpoint: PUT /doctors/consultation/:id/accept
+      await API.put(`/doctors/consultation/${appointmentId}/accept`, { accept: true });
+      
+      // After accepting, refresh sessions to see the newly created telemedicine session
+      await fetchSessions();
+    } catch (err) {
+      alert("Failed to accept consultation.");
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -174,8 +206,8 @@ const DoctorTelemedicine = () => {
         <div className="flex gap-3 mb-6 overflow-x-auto pb-2">
           {[
             { key: 'all', label: 'All', count: stats.total },
-            { key: 'SCHEDULED', label: 'Scheduled', count: stats.scheduled },
-            { key: 'ACTIVE', label: 'Active', count: stats.active },
+            { key: 'SCHEDULED', label: 'Pending Requests', count: stats.scheduled },
+            { key: 'ACTIVE', label: 'In Progress', count: stats.active },
             { key: 'COMPLETED', label: 'Completed', count: stats.completed },
           ].map((f) => (
             <button
@@ -235,7 +267,7 @@ const DoctorTelemedicine = () => {
                         <StatusBadge status={session.status} />
                       </div>
                       
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-gray-400" />
                           <div>
@@ -277,12 +309,28 @@ const DoctorTelemedicine = () => {
                         </button>
                       )}
 
-                      {/* Start Session - Only for SCHEDULED */}
+                      {/* Accept Consultation - Only for SCHEDULED (if needed) */}
                       {session.status === 'SCHEDULED' && (
+                        <button
+                          onClick={() => handleAcceptConsultation(session.appointmentId)}
+                          disabled={actionLoading === session.appointmentId}
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition disabled:opacity-50"
+                        >
+                          {actionLoading === session.appointmentId ? (
+                            <Loader2 className="animate-spin" size={16} />
+                          ) : (
+                            <Check size={16} />
+                          )}
+                          Accept & Start
+                        </button>
+                      )}
+
+                      {/* Start Session - Only for ACTIVE */}
+                      {session.status === 'ACTIVE' && (
                         <button
                           onClick={() => handleStartSession(session.sessionId || session._id)}
                           disabled={actionLoading === (session.sessionId || session._id)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500 text-white text-sm font-semibold hover:bg-green-600 transition disabled:opacity-50"
+                          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-blue-500 text-white text-sm font-semibold hover:bg-blue-600 transition disabled:opacity-50"
                         >
                           {actionLoading === (session.sessionId || session._id) ? (
                             <Loader2 className="animate-spin" size={16} />
@@ -320,4 +368,4 @@ const DoctorTelemedicine = () => {
   );
 };
 
-export default DoctorTelemedicine;
+export default Telemedicine;

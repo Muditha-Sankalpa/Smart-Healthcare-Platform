@@ -68,7 +68,7 @@ const getAppointments = async (req, res) => {
     
     // Call Appointment Service to get appointments for this doctor
     const response = await axios.get(
-      `http://localhost:5003/api/appointments/doctor/appointments?doctorId=${doctor._id}`,
+      `http://localhost:5003/api/appointments/doctor/${doctor._id}`,
       { headers: { Authorization: `Bearer ${req.headers.authorization.split(' ')[1]}` } }
     );
     
@@ -91,7 +91,7 @@ const updateAppointmentStatus = async (req, res) => {
 
     // Call Appointment Service to update status
     const response = await axios.put(
-      `http://localhost:5003/api/appointments/${id}/cancel`,// Reuse cancel endpoint or add new one
+      `http://localhost:5003/api/appointments/${id}/status`,
       { status },
       { headers: { Authorization: `Bearer ${req.headers.authorization.split(' ')[1]}` } }
     );
@@ -297,16 +297,21 @@ const getAllDoctorsAdmin = async (req, res) => {
   }
 };
 
-// Admin: PUT /api/doctors/admin/:id/verify - Verify doctor
+// Admin: PUT /api/doctors/admin/:id/verify - Verify/Unverify doctor
 const verifyDoctor = async (req, res) => {
   try {
+    // ✅ Read status from frontend, default to true if missing
+    const newStatus = req.body.verified !== undefined ? req.body.verified : true;
+
     const doctor = await Doctor.findByIdAndUpdate(
       req.params.id,
-      { verified: true },
+      { verified: newStatus },
       { new: true }
     );
     if (!doctor) return res.status(404).json({ message: 'Doctor not found' });
-    res.json({ message: 'Doctor verified successfully', doctor });
+
+    const action = newStatus ? 'verified' : 'unverified';
+    res.json({ message: `Doctor ${action} successfully`, doctor });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -23,11 +23,11 @@ const DoctorNavBar = ({ requireAuth = true, demoUser }) => {
     try {
       const payload = parseJwtPayload(token);
       if (!payload) return null;
-      
+
       const rawName = payload.name || payload.firstName || payload.email || '';
       const firstName = (rawName || '').trim().split(/\s+/)[0];
       const role = payload.role || '';
-      
+
       if (!role) return null;
       return { firstName, role };
     } catch {
@@ -54,7 +54,7 @@ const DoctorNavBar = ({ requireAuth = true, demoUser }) => {
   return (
     <aside className="w-56 min-h-screen bg-[#122056] border-r border-gray-200 flex flex-col px-4 py-6 gap-2 rounded-r-2xl shadow-lg">
       <div className="text-white font-semibold text-lg mb-6 px-2 italic">Doctor Portal</div>
-      
+
       <Link to="/doctor/profile" className="text-sm text-white/90 px-2 py-2 rounded-lg hover:bg-white/10 hover:text-white hover:font-bold transition-all">
         Profile
       </Link>
@@ -70,7 +70,13 @@ const DoctorNavBar = ({ requireAuth = true, demoUser }) => {
       <Link to="/doctor/availability" className="text-sm text-white/90 px-2 py-2 rounded-lg hover:bg-white/10 hover:text-white hover:font-bold transition-all">
         Availability
       </Link>
-      
+      <Link
+        to="/doctor/patient-reports"
+        className="text-sm text-white/90 px-2 py-2 rounded-lg hover:bg-white/10 hover:text-white hover:font-bold transition-all"
+      >
+        Patient Reports
+      </Link>
+
       <div className="mt-auto flex flex-col gap-2 px-1">
         <div className="text-xs text-white/80">
           <span className="font-semibold text-white">{userInfo.firstName || 'User'}</span> ({userInfo.role})

@@ -19,6 +19,8 @@ import PaymentComponent from './components/payments/PaymentForm';
 import PaymentsAdmin from './pages/payment/PaymentsAdmin';
 import FindDoctors from './pages/patient/FindDoctors';
 import AdminDoctors from './pages/admin/AdminDoctors';
+import PatientReports from './pages/doctor/PatientReports';
+
 function App() {
   return (
     <BrowserRouter>
@@ -43,8 +45,8 @@ function App() {
         <Route path="/payment" element={
           <ProtectedRoute allowedRoles={['Patient']}><PaymentComponent /></ProtectedRoute>
         } />
-        <Route path="/patient/doctors" element={ 
-          <ProtectedRoute allowedRoles={['Patient']}><FindDoctors /></ProtectedRoute> 
+        <Route path="/patient/doctors" element={
+          <ProtectedRoute allowedRoles={['Patient']}><FindDoctors /></ProtectedRoute>
         } />
 
         {/* Doctor-only routes */}
@@ -63,6 +65,9 @@ function App() {
         <Route path="/doctor/telemedicine" element={
           <ProtectedRoute allowedRoles={['Doctor']}><Telemedicine /></ProtectedRoute>
         } />
+        <Route path="/doctor/patient-reports" element={
+          <ProtectedRoute>allowedRoles={['Doctor']}<PatientReports/></ProtectedRoute>
+        }/>
 
         {/* Admin-only routes */}
         <Route path="/admin/dashboard" element={

@@ -357,4 +357,27 @@ exports.getAppointmentsByDoctor = async (req, res) => {
   }
 };
 
+// PUT /api/appointments/:id/status - Update appointment status (for Doctor Service)
+exports.updateAppointmentStatus = async (req, res) => {
+  try {
+    const { status } = req.body; // 'Confirmed', 'Rejected', 'Completed', 'Cancelled'
+    const { id } = req.params;
+    
+    const appointment = await Appointment.findById(id);
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    
+    // Optional: Verify doctor has permission
+    // if (req.user.role === 'Doctor' && appointment.doctorId !== req.user.id) {
+    //   return res.status(403).json({ message: 'Not authorized' });
+    // }
+    
+    appointment.status = status;
+    await appointment.save();
+    
+    res.json({ message: `Appointment ${status}`, appointment });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 exports.generateNextSlot = generateNextSlot;

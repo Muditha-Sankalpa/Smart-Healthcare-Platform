@@ -41,4 +41,6 @@ router.get('/admin/stats', verifyToken, verifyAdmin, appointmentController.getAd
 // new route for doctors to fetch their appointments
 router.get('/doctor/:doctorId', verifyToken, appointmentController.getAppointmentsByDoctor);
 
+router.put('/:id/status', verifyToken, appointmentController.updateAppointmentStatus);
+
 module.exports = router;
